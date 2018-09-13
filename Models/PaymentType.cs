@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 namespace DFBangazon.Models
 {
     public class PaymentType
-{
-    public int AccountNo { get; set; }
-    public string type { get; set; }
-    public string Nickname { get; set; }
-    public Customer Customer { get; set; }
-}
+    {
+        public int CustomerId       
+        public int AccountNo { get; set; }
+        public string Type { get; set; }
+        public string Nickname { get; set; }
+        public Customer Customer { get; set; }
+    }
 }
