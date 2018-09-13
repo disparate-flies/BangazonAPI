@@ -8,9 +8,10 @@ namespace DFBangazon.Models
     public class TrainingProgram
     {
         public int Id { get; set; }
-        public int EmployeeId { get; set; }
-        public Employee EmployeeId { get; set; }
-        public int TrainingId { get; set; }
-        public Training TrainingId { get; set; }
+        public string Name { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public int MaxAttendees { get; set; }
+        public List<Employee> Employee { get; set; }
     }
 }
