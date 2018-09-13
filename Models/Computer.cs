@@ -11,6 +11,5 @@ namespace DFBangazon.Models
         public string PurchaseDate { get; set; }
         public string Condition { get; set; }
         public string DecomissionDate { get; set; }
-        List<Employee> EmployeeList { get; set; } = new List<Employee>();
     }
 }
