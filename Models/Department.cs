@@ -7,5 +7,9 @@ namespace DFBangazon.Models
 {
     public class Department
     {
+        public int Id { get; set; }
+        public string DeptName { get; set; }
+        public double ExpenseBudget { get; set; }
+        public List<Employee> EmployeeList { get; set; } = new List<Employee>();
     }
 }
