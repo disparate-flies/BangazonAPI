@@ -1,41 +1,41 @@
---ALTER TABLE Employee DROP CONSTRAINT [FK_Department];
---ALTER TABLE Product DROP CONSTRAINT [FK_ProductType];
---ALTER TABLE PaymentType DROP CONSTRAINT [FK_Customer];
---ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_Employee];
---ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_TrainingProgram];
---ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Employee_Computer];
---ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Computer];
---ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Product];
---ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Orders];
---ALTER TABLE Orders DROP CONSTRAINT [FK_Customer_Order];
---ALTER TABLE Orders DROP CONSTRAINT [FK_PaymentType];
+ALTER TABLE Employee DROP CONSTRAINT [FK_Department];
+ALTER TABLE Product DROP CONSTRAINT [FK_ProductType];
+ALTER TABLE Product DROP CONSTRAINT [FK_Seller];
+ALTER TABLE PaymentType DROP CONSTRAINT [FK_Customer];
+ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_Employee];
+ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_TrainingProgram];
+ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Employee_Computer];
+ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Computer];
+ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Product];
+ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Orders];
+ALTER TABLE Orders DROP CONSTRAINT [FK_Customer_Order];
+ALTER TABLE Orders DROP CONSTRAINT [FK_PaymentType];
 
---delete from ProductOrder;
---delete from Orders;
---delete from PaymentType;
---delete from Customer;
---delete from Product;
---delete from ProductType;
---delete from EmployeeComputer;
---delete from Computer;
---delete from EmployeeTraining;
---delete from TrainingProgram;
---delete from Employee;
---delete from Department;
+delete from ProductOrder;
+delete from Orders;
+delete from PaymentType;
+delete from Customer;
+delete from Product;
+delete from ProductType;
+delete from EmployeeComputer;
+delete from Computer;
+delete from EmployeeTraining;
+delete from TrainingProgram;
+delete from Employee;
+delete from Department;
 
-
---drop table if exists Department;
---drop table if exists Employee;
---drop table if exists TrainingProgram;
---drop table if exists EmployeeTraining;
---drop table if exists Computer;
---drop table if exists EmployeeComputer;
---drop table if exists ProductType;
---drop table if exists Product;
---drop table if exists Customer;
---drop table if exists PaymentType;
---drop table if exists Orders;
---drop table if exists ProductOrder;
+drop table if exists Department;
+drop table if exists Employee;
+drop table if exists TrainingProgram;
+drop table if exists EmployeeTraining;
+drop table if exists Computer;
+drop table if exists EmployeeComputer;
+drop table if exists ProductType;
+drop table if exists Product;
+drop table if exists Customer;
+drop table if exists PaymentType;
+drop table if exists Orders;
+drop table if exists ProductOrder;
 	
 CREATE TABLE Department (
 Id	integer NOT NULL PRIMARY KEY IDENTITY,
@@ -379,6 +379,29 @@ Insert into EmployeeComputer
 select 9, 9, c.PurchaseDate, null
 from Computer c where c.Id = 9;
 
+Create table Customer (
+Id		integer not null primary key IDENTITY,
+FirstName		varchar(80) not null,
+LastName		varchar(80) not null,
+AccountCreated		varchar(80) not null,
+LastLogin		varchar(80)
+);
+
+Insert into Customer
+(FirstName, LastName, AccountCreated, LastLogin)
+select 'April', 'Watson', '1/19/18', null;
+
+Insert into Customer
+(FirstName, LastName, AccountCreated, LastLogin)
+select 'Larry', 'King', '7/25/18', null;
+
+Insert into Customer
+(FirstName, LastName, AccountCreated, LastLogin)
+select 'Kenya', 'Stevens', '2/13/17', null;
+
+Insert into Customer
+(FirstName, LastName, AccountCreated, LastLogin)
+select 'Kenneth', 'Burnett', '6/13/17', null;
 					
 Create table ProductType (
 Id	integer not null primary key IDENTITY,
@@ -404,66 +427,46 @@ select 'Food';
 CREATE TABLE Product (
 Id	integer NOT NULL PRIMARY KEY IDENTITY,
 ProductTypeId	integer NOT NULL,
+SellerId	integer not null,	
 Price	integer NOT NULL,
 Title		varchar(80) not null,
 ProdDesc		varchar(80) not null,
 Quantity		integer not null,
-Constraint FK_ProductType FOREIGN KEY(ProductTypeId) REFERENCES ProductType(Id)
+Constraint FK_ProductType FOREIGN KEY(ProductTypeId) REFERENCES ProductType(Id),
+Constraint FK_Seller Foreign Key(SellerId) References Customer(Id)
 );
 					
 Insert into Product
-(ProductTypeId, Price, Title, ProdDesc, Quantity) 
-select pt.Id, 5, 'Teddy Bear', 'fluffy & cuddly', 582
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity) 
+select pt.Id, 2, 5, 'Teddy Bear', 'fluffy & cuddly', 582
 from ProductType pt where pt.Name = 'Toys';
 
 Insert into Product
-(ProductTypeId, Price, Title, ProdDesc, Quantity) 
-select pt.Id, 3, 'Dove Beauty Bar', 'gentle cleanser for skin', 1980
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity) 
+select pt.Id, 2, 3, 'Dove Beauty Bar', 'gentle cleanser for skin', 1980
 from ProductType pt where pt.Name = 'Health & Beauty';
 
 Insert into Product 
-(ProductTypeId, Price, Title, ProdDesc, Quantity)
-select pt.Id, 8, 'Pantene Gold Series Shampoo', 'hair nourishment', 750
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity)
+select pt.Id, 2, 8, 'Pantene Gold Series Shampoo', 'hair nourishment', 750
 from ProductType pt where pt.Name = 'Health & Beauty';
 
 Insert into Product 
-(ProductTypeId, Price, Title, ProdDesc, Quantity)
-select pt.Id, 2, 'Chiquita Bananas', 'imported from Mexico', 750
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity) 
+select pt.Id, 2, 2, 'Chiquita Bananas', 'imported from Mexico', 750
 from ProductType pt where pt.Name = 'Food';
 
 Insert into Product 
-(ProductTypeId, Price, Title, ProdDesc, Quantity)
-select pt.Id, 15, 'Jumbo Frozen Shrimp', 'Pacific Wild Caught, 2lb bag', 827
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity)
+select pt.Id, 2, 15, 'Jumbo Frozen Shrimp', 'Pacific Wild Caught, 2lb bag', 827
 from ProductType pt where pt.Name = 'Food';
 
 Insert into Product 
-(ProductTypeId, Price, Title, ProdDesc, Quantity)
-select pt.Id, 4, 'Lysol Wipes', 'bathroom and kitchen cleaner', 1769
+(ProductTypeId, SellerId, Price, Title, ProdDesc, Quantity) 
+select pt.Id, 2, 4, 'Lysol Wipes', 'bathroom and kitchen cleaner', 1769
 from ProductType pt where pt.Name = 'Home & Garden';
 					
-Create table Customer (
-Id		integer not null primary key IDENTITY,
-FirstName		varchar(80) not null,
-LastName		varchar(80) not null,
-AccountCreated		varchar(80) not null,
-LastLogin		varchar(80)
-);
 
-Insert into Customer
-(FirstName, LastName, AccountCreated, LastLogin)
-select 'April', 'Watson', '1/19/18', null;
-
-Insert into Customer
-(FirstName, LastName, AccountCreated, LastLogin)
-select 'Larry', 'King', '7/25/18', null;
-
-Insert into Customer
-(FirstName, LastName, AccountCreated, LastLogin)
-select 'Kenya', 'Stevens', '2/13/17', null;
-
-Insert into Customer
-(FirstName, LastName, AccountCreated, LastLogin)
-select 'Kenneth', 'Burnett', '6/13/17', null;
 
 Create table PaymentType (
 Id		integer not null primary key IDENTITY,
@@ -533,20 +536,20 @@ Constraint FK_Orders foreign key(OrderId) references Orders(Id)
 
 Insert into ProductOrder 
 (ProductId, OrderId)
-select p.Id, o.Id
-from Product p, Orders o, Customer c
-where p.Title = 'Lysol Wipes' and c.FirstName = 'Kenya' and c.LastName = 'Stevens' and o.CustomerId = c.Id;
+select p.Id, 1
+from Product p
+where p.Title = 'Lysol Wipes';
 
 Insert into ProductOrder 
 (ProductId, OrderId)
-select p.Id, o.Id
-from Product p, Orders o, Customer c
-where p.Title = 'Jumbo Frozen Shrimp' and c.FirstName = 'April' and c.LastName = 'Watson' and o.CustomerId = c.Id;
+select p.Id, 2
+from Product p
+where p.Title = 'Jumbo Frozen Shrimp';
 
 Insert into ProductOrder 
 (ProductId, OrderId)
-select p.Id, o.Id
-from Product p, Orders o, Customer c
-where p.Title = 'Chiquita Bananas' and c.FirstName = 'April' and c.LastName = 'Watson' and o.CustomerId = c.Id;
+select p.Id, 2
+from Product p
+where p.Title = 'Chiquita Bananas';
 
 
