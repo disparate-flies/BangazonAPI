@@ -11,5 +11,6 @@ namespace DFBangazon.Models
         public string DeptName { get; set; }
         public double ExpenseBudget { get; set; }
         public List<Employee> EmployeeList { get; set; } = new List<Employee>();
+
     }
 }
