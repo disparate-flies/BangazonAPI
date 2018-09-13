@@ -12,7 +12,9 @@ namespace DFBangazon.Models
         public string Title { get; set;}
         public string ProductDesc { get; set; }
         public int Quantity { get; set; }
-        public Customer CustomerId { get; set;}
-        public ProductType ProductTypeId { get; set; }
+        public int SellerId { get; set; }
+        public Customer Customer { get; set;}
+        public int ProductTypeId { get; set; }
+        public ProductType ProductType { get; set; }
     }
 }
