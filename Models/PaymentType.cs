@@ -7,7 +7,8 @@ namespace DFBangazon.Models
 {
     public class PaymentType
     {
-        public int CustomerId       
+        public int Id { get; set; }
+        public int CustomerId { get; set; }       
         public int AccountNo { get; set; }
         public string Type { get; set; }
         public string Nickname { get; set; }
