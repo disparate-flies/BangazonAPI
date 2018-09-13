@@ -13,7 +13,6 @@ namespace DFBangazon.Models
         public bool IsSupervisor { get; set; }
         public int DepartmentId { get; set;}
         public Department Department { get; set; }
-        public List<EmployeeComputer> EmployeeComputer { get; set; }
-        public List<TrainingProgram> TrainingProgram { get; set; }
+        public Computer Computer { get; set; }
     }
 }
