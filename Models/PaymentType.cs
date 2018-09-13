@@ -10,7 +10,7 @@ namespace DFBangazon.Models
         public int Id { get; set; }
         public int CustomerId { get; set; }       
         public int AccountNo { get; set; }
-        public string Type { get; set; }
+        public string AccType { get; set; }
         public string Nickname { get; set; }
         public Customer Customer { get; set; }
     }
