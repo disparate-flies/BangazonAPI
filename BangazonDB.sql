@@ -511,7 +511,7 @@ Create table Orders (
 Id		integer not null primary key IDENTITY,
 OrderDate		varchar(80) not null,
 CustomerId 		integer not null,
-PaymentTypeId	integer not null,
+PaymentTypeId	integer ,
 Constraint FK_Customer_Order foreign key(CustomerId) references Customer(Id),
 Constraint FK_PaymentType foreign key(PaymentTypeId) references PaymentType(Id)
 );
@@ -525,6 +525,15 @@ Insert into Orders
 (OrderDate, CustomerId, PaymentTypeId)
 select '4/19/18', c.Id, pt.Id
 from Customer c, PaymentType pt where pt.Nickname = 'April Visa' and c.Id = pt.CustomerId;
+
+Insert into Orders 
+(OrderDate, CustomerId, PaymentTypeId)
+select '9/12/18', 4, null;
+
+Insert into Orders 
+(OrderDate, CustomerId, PaymentTypeId)
+select '9/12/18', 4, null;
+
 
 Create table ProductOrder (
 Id	integer not null primary key IDENTITY,
