@@ -67,9 +67,9 @@ namespace DFBangazon.Controllers
         public async Task<IActionResult> Post([FromBody] Product product)
         {
             string sql = $@"INSERT INTO Product
-            (Price, Title, ProductDesc, Quantity, ProductTypeId, SellerId)
+            (Price, Title, ProdDesc, Quantity, ProductTypeId, SellerId)
             VALUES
-            ('{product.Price}', '{product.Title}', '{product.Quantity}', '{product.ProductTypeId}', '{product.SellerId}',);
+            ('{product.Price}', '{product.Title}', '{product.ProdDesc}', '{product.Quantity}', '{product.ProductTypeId}', '{product.SellerId}');
             select MAX(Id) from Product";
 
             using (IDbConnection conn = Connection)
@@ -89,7 +89,7 @@ namespace DFBangazon.Controllers
             UPDATE Product
             SET Price = '{product.Price}',
                 Title = '{product.Title}',
-                ProdcutDesc = '{product.ProductDesc}',
+                ProdDesc = '{product.ProdDesc}',
                 Quantity = '{product.Quantity}',
                 ProductTypeId = '{product.ProductTypeId}',
                 SellerId = '{product.SellerId}'
@@ -140,7 +140,7 @@ namespace DFBangazon.Controllers
 
         private bool ProductExists(int id)
         {
-            string sql = $"SELECT Id, Price, Title, ProductDesc, Quantity, ProductTypeId, SellerId FROM Product WHERE Id = {id}";
+            string sql = $"SELECT Id, Price, Title, ProdDesc, Quantity, ProductTypeId, SellerId FROM Product WHERE Id = {id}";
             using (IDbConnection conn = Connection)
             {
                 return conn.Query<Product>(sql).Count() > 0;
