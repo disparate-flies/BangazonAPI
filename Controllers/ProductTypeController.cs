@@ -1,4 +1,8 @@
-﻿using System;
+﻿//Controller for ProductType Table to GET, GET one, POST, PUT, and DELETE
+//Written by Robert Leedy
+
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,13 +16,14 @@ using DFBangazon.Models;
 
 namespace DFBangazon.Controllers
 {
+    //Define route and set controller base to database
     [Route("api/[controller]")]
     [ApiController]
-    public class ExercisesController : ControllerBase
+    public class ProductTypeController : ControllerBase
     {
         private readonly IConfiguration _config;
 
-        public ExercisesController(IConfiguration config)
+        public ProductTypeController(IConfiguration config)
         {
             _config = config;
         }
@@ -32,6 +37,7 @@ namespace DFBangazon.Controllers
         }
 
         // GET api/values
+        //Defines GET method for GET all from ProductType table
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -44,12 +50,13 @@ namespace DFBangazon.Controllers
             };
         }
 
-        [HttpGet("{id}")]
+        //Defines GET method for GET one specific item from ProductType table
+        [HttpGet("{id}", Name = "GetProductType")]
         public async Task<IActionResult> Get(int id)
         {
             using (IDbConnection conn = Connection)
             {
-                string sql = $"SELECT * FROM Exercise WHERE Id = {id}";
+                string sql = $"SELECT * FROM ProductType WHERE Id = {id}";
 
                 var OneProductType = (await conn.QueryAsync<ProductType>(sql)).Single();
                 return Ok(OneProductType);
@@ -57,6 +64,7 @@ namespace DFBangazon.Controllers
         }
 
         // POST api/values
+        // Defines POST method to add an item to the ProductType table
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ProductType productType)
         {
@@ -68,13 +76,16 @@ namespace DFBangazon.Controllers
 
             using (IDbConnection conn = Connection)
             {
+                //Returns the object that was just created
+
                 var newProductTypeId = (await conn.QueryAsync<int>(sql)).Single();
                 productType.Id = newProductTypeId;
-                return CreatedAtRoute("GetExercise", new { id = newProductTypeId }, productType);
+                return CreatedAtRoute("GetProductType", new { id = newProductTypeId }, productType);
             }
         }
 
         // PUT api/values/5
+        //Defines PUT method to allow changes to be made to exisiting item in ProductType table
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ProductType productType)
         {
@@ -109,6 +120,7 @@ namespace DFBangazon.Controllers
         }
 
         // DELETE api/values/5
+        // Defines DELETE method to remove an item from ProductType Table
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
