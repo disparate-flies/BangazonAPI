@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using Dapper;
-using Product.Models;
+using DFBangazon.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace DFBangazon.Controllers
@@ -68,9 +67,9 @@ namespace DFBangazon.Controllers
         public async Task<IActionResult> Post([FromBody] Product product)
         {
             string sql = $@"INSERT INTO Product
-            (Price, Title, ProductDesc, Quantity, ProductTypeId, CuostomerId)
+            (Price, Title, ProductDesc, Quantity, ProductTypeId, SellerId)
             VALUES
-            ('{product.Price}', '{product.Title}', '{product.Quantity}', '{product.ProductTypeId}', '{product.CustomerId}',);
+            ('{product.Price}', '{product.Title}', '{product.Quantity}', '{product.ProductTypeId}', '{product.SellerId}',);
             select MAX(Id) from Product";
 
             using (IDbConnection conn = Connection)
@@ -93,7 +92,7 @@ namespace DFBangazon.Controllers
                 ProdcutDesc = '{product.ProductDesc}',
                 Quantity = '{product.Quantity}',
                 ProductTypeId = '{product.ProductTypeId}',
-                CustomerId = '{product.CustomerId}'
+                SellerId = '{product.SellerId}'
             WHERE Id = {id}";
 
             try
@@ -141,7 +140,7 @@ namespace DFBangazon.Controllers
 
         private bool ProductExists(int id)
         {
-            string sql = $"SELECT Id, Price, Title, ProductDesc, Quantity, ProductTypeId, CustomerId FROM Product WHERE Id = {id}";
+            string sql = $"SELECT Id, Price, Title, ProductDesc, Quantity, ProductTypeId, SellerId FROM Product WHERE Id = {id}";
             using (IDbConnection conn = Connection)
             {
                 return conn.Query<Product>(sql).Count() > 0;
