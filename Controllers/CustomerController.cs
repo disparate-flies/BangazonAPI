@@ -116,12 +116,9 @@ namespace DFBangazon.Controllers
 
         // GET api/customer?_include=product
         [HttpGet]
-        public async Task<IActionResult> Get(string _include)
+        public async Task<IActionResult> Get(string q, string _include)
         {
-            using (IDbConnection conn = Connection)
-            {
-                Dictionary<int, Customer> report = new Dictionary<int, Customer>();
-                conn.Query<Customer, Product, Customer>(@"
+            string sql = @"
                 SELECT
                     c.Id,
                     c.FirstName,
@@ -136,16 +133,36 @@ namespace DFBangazon.Controllers
                     p.SellerId,
                     p.ProductTypeId
                 FROM Customer c
-                JOIN Product p ON c.Id = p.SellerId
-                ", (customer, product) =>
-                {
-                    if (!report.ContainsKey(customer.Id))
+                JOIN Product p ON c.Id = p.SellerId";
+
+            if (_include !=null && _include.Contains("product"))
+            {
+
+            }
+
+            if (q != null)
+            {
+
+            }
+            Console.WriteLine(sql);
+
+            using (IDbConnection conn = Connection)
+            {
+                if (_include == "product")
+                { 
+                Dictionary<int, Customer> report = new Dictionary<int, Customer>();
+
+                    var customerProducts = await conn.QueryAsync<Customer, Product, Customer>(
+                    sql,
+                    (customer, product) =>
                     {
-                        report[customer.Id] = customer;
+                        return customer;
                     }
-                    report[customer.Id].Products.Add(product);
-                    return customer;
-                });
+                    );
+                    return Ok(customerProducts);
+                    }
+                IEnumerable<Customer> customers = await conn.QueryAsync<Customer>(sql);
+                return Ok(customers);
             }
 
         }
