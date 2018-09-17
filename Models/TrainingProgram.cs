@@ -12,6 +12,6 @@ namespace DFBangazon.Models
         public string StartDate { get; set; }
         public string EndDate { get; set; }
         public int MaxAttendees { get; set; }
-        public List<Employee> Employee { get; set; }
+        public List<Employee> Employee { get; set; } = new List<Employee>();
     }
 }

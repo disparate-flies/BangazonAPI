@@ -9,7 +9,7 @@ namespace DFBangazon.Models
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }
-        public int TrainingId { get; set; }
+        public int TrainingProgramId { get; set; }
         public TrainingProgram TrainingProgram { get; set; }
         public Employee Employee { get; set; }
     }
