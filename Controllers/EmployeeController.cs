@@ -14,7 +14,7 @@ namespace DFBangazon.Controllers //namespace of controller
 {
     [Route("api/[controller]")] //route to API 
     [ApiController]
-    public class EmployeetController : ControllerBase //gives product controller the inheritance of controller base
+    public class EmployeeController : ControllerBase //gives product controller the inheritance of controller base
     {
         private readonly IConfiguration _config; //setting the configuration value to a private readonly _config
 
@@ -84,17 +84,15 @@ namespace DFBangazon.Controllers //namespace of controller
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product product) //edits an existing product
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Employee employee) //edits an existing employee
         {
             string sql = $@" 
-            UPDATE Product
-            SET Price = '{product.Price}',
-                Title = '{product.Title}', 
-                ProdDesc = '{product.ProdDesc}',
-                Quantity = '{product.Quantity}',
-                ProductTypeId = '{product.ProductTypeId}',
-                SellerId = '{product.SellerId}'
-            WHERE Id = {id}"; //edits product by id
+            UPDATE Employee
+            SET FirstName = '{employee.FirstName}',
+                LastName = '{employee.LastName}', 
+                IsSupervisor = '{employee.IsSupervisor}',
+                DepartmentId = '{employee.DepartmentId}'
+            WHERE Id = {id}"; //edits employee by id
 
             try
             {
@@ -110,7 +108,7 @@ namespace DFBangazon.Controllers //namespace of controller
             }
             catch (Exception)
             {
-                if (!ProductExists(id)) //if product id does not exist,
+                if (!EmployeeExists(id)) //if product id does not exist,
                 {
                     return NotFound(); //return a statement "not found"
                 }
@@ -123,9 +121,9 @@ namespace DFBangazon.Controllers //namespace of controller
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id) //deletes a product by id
+        public async Task<IActionResult> Delete([FromRoute] int id) //deletes a employee by id
         {
-            string sql = $@"DELETE FROM Product WHERE Id = {id}"; //sql command that deletes product by id
+            string sql = $@"DELETE FROM Employee WHERE Id = {id}"; //sql command that deletes employee by id
 
             using (IDbConnection conn = Connection)
             {
@@ -139,9 +137,9 @@ namespace DFBangazon.Controllers //namespace of controller
 
         }
 
-        private bool ProductExists(int id) //checks if product exists by id
+        private bool EmployeeExists(int id) //checks if employee exists by id
         {
-            string sql = $"SELECT Id, Price, Title, ProdDesc, Quantity, ProductTypeId, SellerId FROM Product WHERE Id = {id}";
+            string sql = $"SELECT Id, FirstName, LastName, IsSupervisor, DepartmentId FROM Employee WHERE Id = {id}";
             using (IDbConnection conn = Connection)
             {
                 return conn.Query<Product>(sql).Count() > 0; //returns product by id
