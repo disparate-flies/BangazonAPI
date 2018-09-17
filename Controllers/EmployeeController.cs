@@ -14,7 +14,7 @@ namespace DFBangazon.Controllers //namespace of controller
 {
     [Route("api/[controller]")] //route to API 
     [ApiController]
-    public class EmployeeController : ControllerBase //gives product controller the inheritance of controller base
+    public class EmployeeController : ControllerBase //gives employee controller the inheritance of controller base
     {
         private readonly IConfiguration _config; //setting the configuration value to a private readonly _config
 
@@ -44,8 +44,8 @@ namespace DFBangazon.Controllers //namespace of controller
                     sql += $" WHERE FirstName='{firstName}'";
                 }
 
-                var fullProducts = await conn.QueryAsync<Product>(sql);  //exposes the enumerator
-                return Ok(fullProducts); //returns selected employee
+                var fullemployees = await conn.QueryAsync<Employee>(sql);  //exposes the enumerator
+                return Ok(fullemployees); //returns selected employee
             }
 
         }
@@ -56,10 +56,37 @@ namespace DFBangazon.Controllers //namespace of controller
         {
             using (IDbConnection conn = Connection)  //setting the connectin to conn
             {
-                string sql = $"SELECT * FROM Employee WHERE Id = {id}"; //sql select by id
+                string sql = $@"SELECT e.id,
+                                      e.FirstName,
+                                      e.LastName,
+                                      e.IsSupervisor,
+                                      e.DepartmentId,
+                                      ec.ComputerId,
+                                      ec.Id,
+                                      ec.EmployeeId,
+                                      ec.DateAssigned,
+                                      ec.DateTurnedIn,
+                                      c.Id, 
+                                      c.Model,
+                                      c.DecommissionDate,
+                                      c.PurchaseDate,
+                                      c.Condition,
+                                      d.DeptName,
+                                      d.ExpenseBudget,
+                                      d.Id
+                              FROM Employee e
+                              JOIN EmployeeComputer ec ON ec.EmployeeId = e.Id
+                              Join Computer c ON c.Id = ec.ComputerId
+                              JOIN Department d ON d.Id = e.DepartmentId
+                              WHERE e.Id = {id}; "; //sql select by id
 
-                var singleProduct = (await conn.QueryAsync<Product>(sql)).Single(); //exposes the enumerator 
-                return Ok(singleProduct); //returns the selected product
+                var singleEmployee = await conn.QueryAsync<Employee, EmployeeComputer, Computer, Department, Employee>(sql,(employee, employeecomputer, computer, department) =>
+                {
+                    employee.Computer = computer;
+                    employee.Department = department;
+                    return employee;
+                }); //exposes the enumerator 
+                return Ok(singleEmployee); //returns the selected employee
             }
         }
 
@@ -108,7 +135,7 @@ namespace DFBangazon.Controllers //namespace of controller
             }
             catch (Exception)
             {
-                if (!EmployeeExists(id)) //if product id does not exist,
+                if (!EmployeeExists(id)) //if employee id does not exist,
                 {
                     return NotFound(); //return a statement "not found"
                 }
@@ -142,7 +169,7 @@ namespace DFBangazon.Controllers //namespace of controller
             string sql = $"SELECT Id, FirstName, LastName, IsSupervisor, DepartmentId FROM Employee WHERE Id = {id}";
             using (IDbConnection conn = Connection)
             {
-                return conn.Query<Product>(sql).Count() > 0; //returns product by id
+                return conn.Query<Employee>(sql).Count() > 0; //returns employee by id
             }
         }
     }
