@@ -1,41 +1,41 @@
-ALTER TABLE Employee DROP CONSTRAINT [FK_Department];
-ALTER TABLE Product DROP CONSTRAINT [FK_ProductType];
-ALTER TABLE Product DROP CONSTRAINT [FK_Seller];
-ALTER TABLE PaymentType DROP CONSTRAINT [FK_Customer];
-ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_Employee];
-ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_TrainingProgram];
-ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Employee_Computer];
-ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Computer];
-ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Product];
-ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Orders];
-ALTER TABLE Orders DROP CONSTRAINT [FK_Customer_Order];
-ALTER TABLE Orders DROP CONSTRAINT [FK_PaymentType];
+--ALTER TABLE Employee DROP CONSTRAINT [FK_Department];
+--ALTER TABLE Product DROP CONSTRAINT [FK_ProductType];
+--ALTER TABLE Product DROP CONSTRAINT [FK_Seller];
+--ALTER TABLE PaymentType DROP CONSTRAINT [FK_Customer];
+--ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_Employee];
+--ALTER TABLE EmployeeTraining DROP CONSTRAINT [FK_TrainingProgram];
+--ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Employee_Computer];
+--ALTER TABLE EmployeeComputer DROP CONSTRAINT [FK_Computer];
+--ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Product];
+--ALTER TABLE ProductOrder DROP CONSTRAINT [FK_Orders];
+--ALTER TABLE Orders DROP CONSTRAINT [FK_Customer_Order];
+--ALTER TABLE Orders DROP CONSTRAINT [FK_PaymentType];
 
-delete from ProductOrder;
-delete from Orders;
-delete from PaymentType;
-delete from Customer;
-delete from Product;
-delete from ProductType;
-delete from EmployeeComputer;
-delete from Computer;
-delete from EmployeeTraining;
-delete from TrainingProgram;
-delete from Employee;
-delete from Department;
+--delete from ProductOrder;
+--delete from Orders;
+--delete from PaymentType;
+--delete from Customer;
+--delete from Product;
+--delete from ProductType;
+--delete from EmployeeComputer;
+--delete from Computer;
+--delete from EmployeeTraining;
+--delete from TrainingProgram;
+--delete from Employee;
+--delete from Department;
 
-drop table if exists Department;
-drop table if exists Employee;
-drop table if exists TrainingProgram;
-drop table if exists EmployeeTraining;
-drop table if exists Computer;
-drop table if exists EmployeeComputer;
-drop table if exists ProductType;
-drop table if exists Product;
-drop table if exists Customer;
-drop table if exists PaymentType;
-drop table if exists Orders;
-drop table if exists ProductOrder;
+--drop table if exists Department;
+--drop table if exists Employee;
+--drop table if exists TrainingProgram;
+--drop table if exists EmployeeTraining;
+--drop table if exists Computer;
+--drop table if exists EmployeeComputer;
+--drop table if exists ProductType;
+--drop table if exists Product;
+--drop table if exists Customer;
+--drop table if exists PaymentType;
+--drop table if exists Orders;
+--drop table if exists ProductOrder;
 	
 CREATE TABLE Department (
 Id	integer NOT NULL PRIMARY KEY IDENTITY,
@@ -466,45 +466,44 @@ Insert into Product
 select pt.Id, 2, 4, 'Lysol Wipes', 'bathroom and kitchen cleaner', 1769
 from ProductType pt where pt.Name = 'Home & Garden';
 					
-
-
 Create table PaymentType (
 Id		integer not null primary key IDENTITY,
 AccountNo		integer not null,
 AccType		varchar(80) not null,
 Nickname		varchar(80) not null,
+IsActive bit not null,
 CustomerId	integer not null,
 Constraint FK_Customer foreign key(CustomerId) references Customer(Id)
 );
 
 insert into PaymentType 
-(AccountNo, AccType, Nickname, CustomerId)
-select 10000, 'CC', 'Larry Visa', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId)
+select 10000, 'CC', 'Larry Visa', 1, c.Id
 from Customer c where c.FirstName = 'Larry' and c.LastName = 'King';
 
 insert into PaymentType
-(AccountNo, AccType, Nickname, CustomerId) 
-select 20000, 'CC', 'Kenya Visa', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId) 
+select 20000, 'CC', 'Kenya Visa', 1, c.Id
 from Customer c where c.FirstName = 'Kenya' and c.LastName = 'Stevens';
 
 insert into PaymentType 
-(AccountNo, AccType, Nickname, CustomerId)
-select 30000, 'CC', 'Kenya MasterCard', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId)
+select 30000, 'CC', 'Kenya MasterCard', 1, c.Id
 from Customer c where c.FirstName = 'Kenya' and c.LastName = 'Stevens';
 
 insert into PaymentType 
-(AccountNo, AccType, Nickname, CustomerId)
-select 40000, 'CC', 'Ken Discover', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId)
+select 40000, 'CC', 'Ken Discover', 1, c.Id
 from Customer c where c.FirstName = 'Kenneth' and c.LastName = 'Burnett';
 
 insert into PaymentType 
-(AccountNo, AccType, Nickname, CustomerId)
-select 50000, 'CC', 'April Visa', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId)
+select 50000, 'CC', 'April Visa', 1, c.Id
 from Customer c where c.FirstName = 'April' and c.LastName = 'Watson';
 
 insert into PaymentType
-(AccountNo, AccType, Nickname, CustomerId) 
-select 60000, 'CC', 'April MasterCard', c.Id
+(AccountNo, AccType, Nickname, IsActive, CustomerId) 
+select 60000, 'CC', 'April MasterCard', 1, c.Id
 from Customer c where c.FirstName = 'April' and c.LastName = 'Watson';
 
 Create table Orders (
@@ -560,5 +559,3 @@ Insert into ProductOrder
 select p.Id, 2
 from Product p
 where p.Title = 'Chiquita Bananas';
-
-
