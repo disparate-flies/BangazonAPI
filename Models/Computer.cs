@@ -9,7 +9,8 @@ namespace DFBangazon.Models
     {
         public int Id { get; set; }
         public string PurchaseDate { get; set; }
+        public string Model { get; set; }
+        public string DecommissionDate { get; set; }
         public string Condition { get; set; }
-        public string DecomissionDate { get; set; }
     }
 }
