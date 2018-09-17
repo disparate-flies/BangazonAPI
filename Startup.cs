@@ -40,7 +40,9 @@ namespace DFBangazon
                 app.UseHsts();
             }
 
+
             /*app.UseHttpsRedirection();*/
+
             app.UseMvc();
         }
     }
