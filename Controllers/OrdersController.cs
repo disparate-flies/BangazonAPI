@@ -35,7 +35,7 @@ namespace DFBangazon.Controllers
 
         // GET api/ordes?somethinghere
         [HttpGet]
-        public async Task<IActionResult> Get(string completed)
+        public async Task<IActionResult> Get(string completed, string _include)
         {
             using (IDbConnection conn = Connection)
             {
@@ -44,9 +44,23 @@ namespace DFBangazon.Controllers
                 if(completed == "false")
                 {
                     sql += $" WHERE PaymentTypeId is null";
+                    var fullOrders = await conn.QueryAsync<Orders>(sql);
+                } else if(completed == "true")
+                {
+                    sql += $" WHERE PaymentTypeId is not null";
+                    var fullOrders = await conn.QueryAsync<Orders>(sql);
                 }
 
-                var fullOrders = await conn.QueryAsync<Orders>(sql);
+                if(_include == "products")
+                {
+
+                    sql = "SELECT o.Id, o.OrderDate, o.CustomerId, o.PaymentTypeId, p.Title, p.Price FROM Orders o JOIN ProductOrder po ON o.Id = po.OrderId Join Product p ON po.ProductId = p.Id";
+
+                    var fullOrders = await conn.QueryAsync<Orders>(sql);
+                    
+                }
+
+                
                 return Ok(fullOrders);
             }
 
