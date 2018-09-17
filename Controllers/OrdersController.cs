@@ -45,23 +45,51 @@ namespace DFBangazon.Controllers
                 {
                     sql += $" WHERE PaymentTypeId is null";
                     var fullOrders = await conn.QueryAsync<Orders>(sql);
+                    return Ok(fullOrders);
                 } else if(completed == "true")
                 {
                     sql += $" WHERE PaymentTypeId is not null";
                     var fullOrders = await conn.QueryAsync<Orders>(sql);
+                    return Ok(fullOrders);
                 }
 
                 if(_include == "products")
                 {
+                    Dictionary<int, Orders> listOfOrders = new Dictionary<int, Orders>();
 
-                    sql = "SELECT o.Id, o.OrderDate, o.CustomerId, o.PaymentTypeId, p.Title, p.Price FROM Orders o JOIN ProductOrder po ON o.Id = po.OrderId Join Product p ON po.ProductId = p.Id";
+                    sql = @"SELECT
+                            o.Id,
+                            o.OrderDate,
+                            o.CustomerId,
+                            o.PaymentTypeId,
+                            p.Title,
+                            p.Price
+                            FROM Orders o
+                            JOIN ProductOrder po ON o.Id = po.OrderId
+                            JOIN Product p ON po.ProductId = p.Id";
 
+                    var fullOrders = await conn.QueryAsync<Orders, Product, Orders>(
+                        sql,
+                        (orders, product) =>
+                        {
+                            if (!listOfOrders.ContainsKey(orders.Id))
+                            {
+                                listOfOrders[orders.Id]=orders;
+                            }
+                            listOfOrders[orders.Id].ProductList.Add(product);
+                            return orders;
+                        }
+                        );
+                
+                    return Ok(fullOrders);
+                } else
+                {
+                    sql = "SELECT * FROM Orders";
                     var fullOrders = await conn.QueryAsync<Orders>(sql);
-                    
+                    return Ok(fullOrders);
                 }
 
-                
-                return Ok(fullOrders);
+                //return Ok(fullOrders);
             }
 
         }
