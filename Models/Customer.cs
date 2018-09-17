@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿//Created by Natasha Cox, 
+
+using System;
 
 namespace DFBangazon.Models
 {
@@ -10,7 +9,7 @@ namespace DFBangazon.Models
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime AccountCreated { get; set }
+        public DateTime AccountCreated { get; set; }
         public DateTime LastLogin { get; set; }
 }
 }
