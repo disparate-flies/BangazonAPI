@@ -21,5 +21,5 @@ In appsettings.json in C# file, copy and paste the following code:
     "DefaultConnection": "Server=DESKTOP-U33P79O\\SQLEXPRESS;Database=nssexercises;Trusted_Connection=True;"
 }
 
-
+Open Postman and test following commands:
 
