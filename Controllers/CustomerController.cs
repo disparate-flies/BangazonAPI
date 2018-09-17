@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//Author: Natasha Cox
+
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace DFBangazon.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
-        // GET api/values
+        // GET api/customer
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -43,8 +44,8 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
+        // GET api/customer/5
+        [HttpGet("{id}", Name = "GetCustomer")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
             using (IDbConnection conn = Connection)
@@ -56,7 +57,7 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // POST api/values
+        // POST api/customer
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
@@ -74,7 +75,7 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // PUT api/values/5
+        // PUT api/customer/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Customer customer)
         {
@@ -111,7 +112,7 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // DELETE api/values/5
+        // DELETE api/customer/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
