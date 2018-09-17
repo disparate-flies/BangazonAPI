@@ -62,23 +62,23 @@ namespace DFBangazon.Controllers
                             o.OrderDate,
                             o.CustomerId,
                             o.PaymentTypeId,
+                            po.Id,
+                            po.ProductId,
+                            po.OrderId,
                             p.Id,
                             p.Price,
                             p.Title,
                             p.ProdDesc,
                             p.Quantity,
                             p.SellerId,
-                            p.ProductTypeId,
-                            po.Id,
-                            po.ProductId,
-                            po.OrderId
+                            p.ProductTypeId
                             FROM Orders o
                             JOIN ProductOrder po ON o.Id = po.OrderId
                             JOIN Product p ON po.ProductId = p.Id"; 
 
-                    var fullOrders = await conn.QueryAsync<Orders, Product, Orders>(
+                    var fullOrders = await conn.QueryAsync<Orders, ProductOrder, Product, Orders>(
                         sql,
-                        (orders, product) =>
+                        (orders, productorder, product) =>
                         {
                             if (!listOfOrders.ContainsKey(orders.Id))
                             {
@@ -89,7 +89,7 @@ namespace DFBangazon.Controllers
                         }
                         );
                 
-                    return Ok(fullOrders);
+                    return Ok(listOfOrders.Values);
                 } else
                 {
                     sql = "SELECT * FROM Orders";
