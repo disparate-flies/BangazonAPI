@@ -1,4 +1,5 @@
 ﻿//Author: Natasha Cox
+//Handles everything related to Customer Model
 
 using System;
 using System.Data;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Dapper;
 using DFBangazon.Models;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace DFBangazon.Controllers
 {
@@ -110,6 +112,42 @@ namespace DFBangazon.Controllers
                     throw;
                 }
             }
+        }
+
+        // GET api/customer?_include=product
+        [HttpGet]
+        public async Task<IActionResult> Get(string _include)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                Dictionary<int, Customer> report = new Dictionary<int, Customer>();
+                conn.Query<Customer, Product, Customer>(@"
+                SELECT
+                    c.Id,
+                    c.FirstName,
+                    c.LastName,
+                    c.AccountCreated,
+                    c.LastLogin,
+                    p.Id,
+                    p.Price,
+                    p.Title,
+                    p.ProdDesc,
+                    p.Quantity,
+                    p.SellerId,
+                    p.ProductTypeId
+                FROM Customer c
+                JOIN Product p ON c.Id = p.SellerId
+                ", (customer, product) =>
+                {
+                    if (!report.ContainsKey(customer.Id))
+                    {
+                        report[customer.Id] = customer;
+                    }
+                    report[customer.Id].Products.Add(product);
+                    return customer;
+                });
+            }
+
         }
 
         // DELETE api/customer/5
