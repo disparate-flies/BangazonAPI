@@ -1,4 +1,7 @@
-﻿using System;
+﻿//========================== coded by April Watson ================================
+// Contains all properties necessary for Department controller
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
