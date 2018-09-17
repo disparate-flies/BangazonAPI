@@ -1,4 +1,9 @@
-﻿using System;
+﻿/* 
+  ===================== coded by April Watson ===========================
+  Contains all methods necessary to GET, POST, PUT and DELETE Orders
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -33,12 +38,19 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // GET api/ordes?somethinghere
+
         [HttpGet]
         public async Task<IActionResult> Get(string completed, string _include)
         {
             using (IDbConnection conn = Connection)
             {
+                /* 
+                   GET api/orders?completed=false
+                   Retrieves only orders that are inccomplete (have null payment type id)
+
+                   GET api/orders?completed=true
+                   Retrieves only orders that are complete
+                */
                 string sql = "SELECT * FROM Orders";
 
                 if(completed == "false")
@@ -53,7 +65,14 @@ namespace DFBangazon.Controllers
                     return Ok(fullOrders);
                 }
 
-                if(_include == "products")
+                /* 
+                   GET api/orders?_include=products
+                   Retrieves orders with their corresponding Product objects
+
+                   GET api/orders?_include=customers
+                   Retrieves orders with their corresponding Customer object
+                */
+                if (_include == "products")
                 {
                     Dictionary<int, Orders> listOfOrders = new Dictionary<int, Orders>();
 
@@ -90,6 +109,36 @@ namespace DFBangazon.Controllers
                         );
                 
                     return Ok(listOfOrders.Values);
+                } else if(_include == "customers")
+                {
+                    Dictionary<int, Orders> orderWithCust = new Dictionary<int, Orders>();
+
+                    sql = @"SELECT
+                            o.Id,
+                            o.OrderDate,
+                            o.CustomerId,
+                            o.PaymentTypeId,
+                            c.Id,
+                            c.FirstName,
+                            c.LastName,
+                            c.AccountCreated,
+                            c.LastLogin
+                            FROM Orders o
+                            JOIN Customer c ON o.CustomerId=c.Id";
+
+                    var fullOrders = await conn.QueryAsync<Orders, Customer, Orders>(
+                        sql,
+                        (orders, customer) =>
+                        {
+                            if(!orderWithCust.ContainsKey(orders.Id))
+                            {
+                                orderWithCust[orders.Id] = orders;
+                            }
+                            orderWithCust[orders.Id].Customer = customer;
+                            return orders;
+                        }
+                        );
+                    return Ok(fullOrders);
                 } else
                 {
                     sql = "SELECT * FROM Orders";
@@ -97,12 +146,14 @@ namespace DFBangazon.Controllers
                     return Ok(fullOrders);
                 }
 
-                //return Ok(fullOrders);
             }
 
         }
 
-        // GET api/orders/5
+        /* 
+            GET api/orders/5
+            Retrieves specific order by Id
+        */
         [HttpGet("{id}", Name = "GetOrder")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
@@ -115,7 +166,10 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // POST api/values
+        /* 
+            POST api/orders
+            Creates new orders object and assigns it an Id
+        */
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Orders orders)
         {
@@ -134,7 +188,10 @@ namespace DFBangazon.Controllers
 
         }
 
-        // PUT api/values/5
+        /* 
+            PUT api/orders/4
+            Edits orders object by Id and returns "Not Found" exception if the Id doesn't exist
+        */
         [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Orders orders)
         {
@@ -170,11 +227,15 @@ namespace DFBangazon.Controllers
             }
         }
 
-        // DELETE api/values/5
+        /* 
+            DELETE api/orders/4
+            Deletes orders object by Id
+        */
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            string sql = $@"DELETE FROM Orders WHERE Id = {id}";
+            string sql = $@" DELETE from ProductOrder Where OrderId = {id};
+                             DELETE FROM Orders WHERE Id = {id}";
 
             using (IDbConnection conn = Connection)
             {
