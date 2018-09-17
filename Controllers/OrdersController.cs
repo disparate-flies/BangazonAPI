@@ -62,11 +62,19 @@ namespace DFBangazon.Controllers
                             o.OrderDate,
                             o.CustomerId,
                             o.PaymentTypeId,
+                            p.Id,
+                            p.Price,
                             p.Title,
-                            p.Price
+                            p.ProdDesc,
+                            p.Quantity,
+                            p.SellerId,
+                            p.ProductTypeId,
+                            po.Id,
+                            po.ProductId,
+                            po.OrderId
                             FROM Orders o
                             JOIN ProductOrder po ON o.Id = po.OrderId
-                            JOIN Product p ON po.ProductId = p.Id";
+                            JOIN Product p ON po.ProductId = p.Id"; 
 
                     var fullOrders = await conn.QueryAsync<Orders, Product, Orders>(
                         sql,
