@@ -42,7 +42,13 @@ namespace DFBangazon.Controllers
                 string sql = "SELECT * FROM Customer";
 
                 // GET api/customer?_include=product
-
+                if (q != null)
+                {
+                    sql = ($@"SELECT * FROM 
+                        Customer WHERE 
+                        FirstName LIKE '%{q}' 
+                        OR LastName LIKE '%{q}'");
+                }
                 if (_include == "products")
                 {
                     Dictionary<int, Customer> customerProducts = new Dictionary<int, Customer>();
