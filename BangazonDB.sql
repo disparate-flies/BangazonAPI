@@ -559,3 +559,21 @@ Insert into ProductOrder
 select p.Id, 2
 from Product p
 where p.Title = 'Chiquita Bananas';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 3
+from Product p
+where p.Title = 'Teddy Bear';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 4
+from Product p
+where p.Title = 'Dove Beauty Bar';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 4
+from Product p
+where p.Title = 'Pantene Gold Series Shampoo';
