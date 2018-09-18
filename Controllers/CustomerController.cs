@@ -44,10 +44,12 @@ namespace DFBangazon.Controllers
                 //GET api/customer is active
                 if (active == "false")
                 {
-                    sql = $@"SELECT * FROM Customers 
-LEFT JOIN Orders ON Orders.CustomerId = Customer.Id";
-                } else {
-                        return new StatusCodeResult(StatusCodes.Status404NotFound);
+                    sql = $@"SELECT * FROM Customer 
+LEFT JOIN Orders ON Orders.CustomerId = Customer.Id WHERE OrderDate IS NULL";
+
+                    var customerNoOrders = await conn.QueryAsync<Customer>(sql);
+                    return Ok(customerNoOrders);
+
                 }
                 
                 //GET api/customer?q=
