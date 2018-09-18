@@ -59,7 +59,8 @@ namespace DFBangazon.Controllers
                                FROM TrainingProgram tp
                                JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
                                JOIN Employee e on et.EmployeeId = e.Id";
-                var fullTrainingProgram = await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
+                var fullTrainingProgram = 
+                    await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
                     sql,
                     (trainingprogram, employeetraining, employee) =>
                         {
@@ -74,7 +75,47 @@ namespace DFBangazon.Controllers
 
                 return Ok(EmpsInTraining.Values);
             };
-        }       
-    }
+        }
+
+        [HttpGet("{Id}", Name = "GetTrainingProgram")]
+        public async Task<IActionResult> Get(int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                Dictionary<int, TrainingProgram> EmpsInTraining = new Dictionary<int, TrainingProgram>();
+
+                string sql = $@"SELECT tp.ProgName,
+                                       tp.Id,
+                                       tp.StartDate,
+                                       tp.EndDate,
+                                       tp.MaxAttendees,
+                                       et.Id,
+                                       et.EmployeeId,
+                                       et.TrainingProgramId,
+                                       e.Id,
+                                       e.IsSupervisor,
+                                       e.DepartmentId,
+                                       e.FirstName,
+                                       e.LastName
+                               FROM TrainingProgram tp
+                               JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                               JOIN Employee e on et.EmployeeId = e.Id
+                               WHERE tp.Id = {id}";
+
+                await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
+                        sql, (trainingprogram, employeetraining, employee) =>
+                        {
+                            if (!EmpsInTraining.ContainsKey(trainingprogram.Id))
+                            {
+                                EmpsInTraining[trainingprogram.Id] = trainingprogram;
+                            }
+                            EmpsInTraining[trainingprogram.Id].Employee.Add(employee);
+                            return trainingprogram;
+                        }
+                        );
+                return Ok(EmpsInTraining.Values);
+            };
+        }
+    };
 }
 
