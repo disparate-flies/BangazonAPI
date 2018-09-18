@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace DFBangazon.Controllers
 {
@@ -159,10 +158,41 @@ namespace DFBangazon.Controllers
         {
             using (IDbConnection conn = Connection)
             {
-                string sql = $"SELECT * FROM Orders WHERE Id = {id}";
+                Dictionary<int, Orders> orderDetail = new Dictionary<int, Orders>();
 
-                var theSingleOrder = (await conn.QueryAsync<Orders>(sql)).Single();
-                return Ok(theSingleOrder);
+                string sql = $@"SELECT
+                            o.Id,
+                            o.OrderDate,
+                            o.CustomerId,
+                            o.PaymentTypeId,
+                            po.Id,
+                            po.ProductId,
+                            po.OrderId,
+                            p.Id,
+                            p.Price,
+                            p.Title,
+                            p.ProdDesc,
+                            p.Quantity,
+                            p.SellerId,
+                            p.ProductTypeId
+                            FROM Orders o
+                            JOIN ProductOrder po ON o.Id = po.OrderId
+                            JOIN Product p ON po.ProductId = p.Id
+                            WHERE o.Id={id}";
+
+                var theOrderDetail = await conn.QueryAsync<Orders, ProductOrder, Product, Orders>(
+                        sql,
+                        (orders, productorder, product) =>
+                        {
+                            if (!orderDetail.ContainsKey(orders.Id))
+                            {
+                                orderDetail[orders.Id] = orders;
+                            }
+                            orderDetail[orders.Id].ProductList.Add(product);
+                            return orders;
+                        }
+                        );
+                return Ok(orderDetail.Values);
             }
         }
 
