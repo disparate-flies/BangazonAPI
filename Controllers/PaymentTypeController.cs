@@ -35,14 +35,15 @@ namespace DFBangazon.Models
             }
         }
 
-        // GET * | queries PaymentType table and returns all data
+        // GET * | queries PaymentType table and returns all active payments
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(bool isActive)
         {
             using (IDbConnection conn = Connection)
             {
-                string sql = "SELECT * FROM PaymentType";
+                string sql = "SELECT * FROM PaymentType WHERE isActive = 1";
 
+                
                 var fullPaymentType = await conn.QueryAsync<PaymentType>(sql);
                 return Ok(fullPaymentType);
             }
