@@ -56,8 +56,8 @@ namespace DFBangazon.Controllers
                                       e.FirstName,
                                       e.LastName
                                FROM TrainingProgram tp
-                               JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
-                               JOIN Employee e on et.EmployeeId = e.Id";
+                               LEFT JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                               LEFT JOIN Employee e on et.EmployeeId = e.Id";
 
                 if (_completed == "false")
                 {
@@ -122,8 +122,8 @@ namespace DFBangazon.Controllers
                                        e.FirstName,
                                        e.LastName
                                FROM TrainingProgram tp
-                               JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
-                               JOIN Employee e on et.EmployeeId = e.Id
+                               LEFT JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                               LEFT JOIN Employee e on et.EmployeeId = e.Id
                                WHERE tp.Id = {id}";
 
                 await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
@@ -139,6 +139,93 @@ namespace DFBangazon.Controllers
                         );
                 return Ok(EmpsInTraining.Values);
             };
+        }
+        // Defines POST method to add an item to the ProductType table
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] TrainingProgram trainingProgram)
+        {
+            string sql = $@"INSERT INTO TrainingProgram
+            (ProgName, StartDate, EndDate, MaxAttendees)
+            VALUES
+            ('{trainingProgram.ProgName}', '{trainingProgram.StartDate}', '{trainingProgram.EndDate}', '{trainingProgram.MaxAttendees}');
+            select MAX(Id) from TrainingProgram";
+
+            using (IDbConnection conn = Connection)
+            {
+                //Returns the object that was just created
+
+                var newTrainingProgramId = (await conn.QueryAsync<int>(sql)).Single();
+                trainingProgram.Id = newTrainingProgramId;
+                return CreatedAtRoute("GetTrainingProgram", new { id = newTrainingProgramId }, trainingProgram);
+            }
+        }
+
+        // PUT api/values/5
+        //Defines PUT method to allow changes to be made to exisiting item in ProductType table
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
+        {
+            string sql = $@"
+            UPDATE TrainingProgram
+            SET ProgName = '{trainingProgram.ProgName}',
+                StartDate = '{trainingProgram.StartDate}',
+                EndDate = '{trainingProgram.EndDate}',
+                MaxAttendees = '{trainingProgram.MaxAttendees}'
+            WHERE Id = {id}";
+
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
+                }
+            }
+            catch (Exception)
+            {
+                if (!TrainingProgramExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        // DELETE api/values/5
+        // Defines DELETE method to remove an item from ProductType Table
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
+        //{
+        //    if (trainingProgram.StartDate >= );
+
+        //    string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
+
+        //    using (IDbConnection conn = Connection)
+        //    {
+        //        int rowsAffected = await conn.ExecuteAsync(sql);
+        //        if (rowsAffected > 0)
+        //        {
+        //            return new StatusCodeResult(StatusCodes.Status204NoContent);
+        //        }
+        //        throw new Exception("No rows affected");
+        //    }
+
+        }
+
+        private bool TrainingProgramExists(int id)
+        {
+            string sql = $"SELECT Id, ProgName, StartDate, EndDate, MaxAttendees FROM TrainingProgram WHERE Id = {id}";
+            using (IDbConnection conn = Connection)
+            {
+                return conn.Query<TrainingProgram>(sql).Count() > 0;
+            }
         }
     };
 }
