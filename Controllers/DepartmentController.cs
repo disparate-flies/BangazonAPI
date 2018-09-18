@@ -1,6 +1,7 @@
 ﻿//coded by JENN
 using Dapper;
 using DFBangazon.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -17,7 +18,6 @@ namespace DFBangazon.Controllers
     public class DepartmentController :ControllerBase
     {
         private readonly IConfiguration _config;
-        private object listOfDepartments;
 
         public DepartmentController(IConfiguration config)
         {
@@ -73,13 +73,13 @@ namespace DFBangazon.Controllers
                     return Ok(listOfDepartments.Values);
                 }
 
-                    //If the query string parameters of?_filter=budget&_gt=300000 is provided on a request for the list of departments, then any department whose budget is $300, 000, or greater, should be in the response.
+                //If the query string parameters of?_filter=budget&_gt=300000 is provided on a request for the list of departments, then any department whose budget is $300, 000, or greater, should be in the response.
 
                 if (_filter == "budget" && _gt >= 300000)
                 {
-                   
+
                     sql = $@"SELECT * FROM Department WHERE ExpenseBudget >= {_gt}";
-                        
+
                 }
 
                 var departmentBudget = await conn.QueryAsync<Department>(sql);
@@ -90,6 +90,79 @@ namespace DFBangazon.Controllers
 
         }
 
+        //Get api/department/{id}
+        [HttpGet("{id}", Name = "GetDepartment")]
+        public async Task<IActionResult> Get([FromRoute] int id)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                string sql = $"SELECT * FROM Department WHERE Id = {id}";
+
+                var aSingleDepartment = (await conn.QueryAsync<Department>(sql)).Single();
+                return Ok(aSingleDepartment);
+            }
+        }
+
+        //Post api/department
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Department department)
+        {
+            string sql = $@"INSERT INTO Department
+            (DeptName, ExpenseBudget)
+            VALUES
+            ('{department.DeptName}', '{department.ExpenseBudget}');
+            SELECT MAX(Id) from Department";
+
+            using (IDbConnection conn = Connection)
+            {
+                var newDepartmentId = (await conn.QueryAsync<int>(sql)).Single();
+                department.Id = newDepartmentId;
+                return CreatedAtRoute("GetDepartment", new { id = newDepartmentId }, department);
+            }
+        }
+
+        //PUT api/department/5
+        [HttpPut{"{id}")]
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Department department)
+        {
+            string sql = $@"UPDATE Department
+                            SET DeptName = '{department.DeptName}',
+                                ExpenseBudget = '{department.ExpenseBudget}'
+                            WHERE Id = {id}";
+
+            try
+            {
+                using (IDbConnection conn = Connection)
+                {
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
+                }
+            }
+            catch (Exception)
+            {
+                if (!DepartmentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private bool DepartmentExists(int id)
+        {
+            string sql = $"SELECT Id, DeptName, ExpenseBudget FROM Department WHERE Id = {id}";
+            using (IDbConnection conn = Connection)
+            {
+                return conn.Query<Department>(sql).Count() > 0;
+            }
+        }
             
     }
 }
