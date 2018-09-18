@@ -35,13 +35,22 @@ namespace DFBangazon.Controllers
         }
         // GET api/customer
         [HttpGet]
-        public async Task<IActionResult> Get(string q, string _include)
+        public async Task<IActionResult> Get(string q, string _include, string active)
         {
             using (IDbConnection conn = Connection)
             {
                 string sql = "SELECT * FROM Customer";
 
-                // GET api/customer?_include=product
+                //GET api/customer is active
+                if (active == "false")
+                {
+                    sql = $@"SELECT * FROM Customers 
+LEFT JOIN Orders ON Orders.CustomerId = Customer.Id";
+                } else {
+                        return new StatusCodeResult(StatusCodes.Status404NotFound);
+                }
+                
+                //GET api/customer?q=
                 if (q != null)
                 {
                     sql = ($@"SELECT * FROM 
@@ -49,6 +58,8 @@ namespace DFBangazon.Controllers
                         FirstName LIKE '%{q}' 
                         OR LastName LIKE '%{q}'");
                 }
+
+                // GET api/customer?_include=product
                 if (_include == "products")
                 {
                     Dictionary<int, Customer> customerProducts = new Dictionary<int, Customer>();
