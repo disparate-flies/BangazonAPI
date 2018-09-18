@@ -54,7 +54,7 @@ namespace DFBangazon.Controllers
                             e.FirstName,
                             e.LastName,
                             e.IsSupervisor,
-                            
+                            e.IsActive,
                             e.DepartmentId
                             FROM Department d
                             JOIN Employee e ON d.Id = e.DepartmentId";
@@ -122,7 +122,7 @@ namespace DFBangazon.Controllers
         }
 
         //PUT api/department/5
-        [HttpPut{"{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Department department)
         {
             string sql = $@"UPDATE Department
