@@ -69,103 +69,116 @@ FirstName	varchar(80) NOT NULL,
 LastName	varchar(80) NOT NULL,
 IsSupervisor	bit not null,
 DepartmentId integer not null,
+IsActive	bit not null
 Constraint FK_Department FOREIGN KEY(DepartmentId) REFERENCES Department(Id)
 );
 					
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Emp',
 'One',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Person',
 'Two',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select'Man',
 'Three',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Boss',
 'Woman',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Lady',
 'Four',
 0,
-d.Id
+d.Id,
+0
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'John',
 'Doe',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Man',
 'Five',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Dude',
 'Six',
 0,
-d.Id
+d.Id,
+0
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Jane',
 'Doe',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Chick',
 'Seven',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Mister',
 'Eight',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Madam',
 'Nine',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 					
 CREATE TABLE TrainingProgram (
@@ -510,7 +523,7 @@ Create table Orders (
 Id		integer not null primary key IDENTITY,
 OrderDate		varchar(80) not null,
 CustomerId 		integer not null,
-PaymentTypeId	integer not null,
+PaymentTypeId	integer ,
 Constraint FK_Customer_Order foreign key(CustomerId) references Customer(Id),
 Constraint FK_PaymentType foreign key(PaymentTypeId) references PaymentType(Id)
 );
@@ -524,6 +537,15 @@ Insert into Orders
 (OrderDate, CustomerId, PaymentTypeId)
 select '4/19/18', c.Id, pt.Id
 from Customer c, PaymentType pt where pt.Nickname = 'April Visa' and c.Id = pt.CustomerId;
+
+Insert into Orders 
+(OrderDate, CustomerId, PaymentTypeId)
+select '9/12/18', 4, null;
+
+Insert into Orders 
+(OrderDate, CustomerId, PaymentTypeId)
+select '9/12/18', 4, null;
+
 
 Create table ProductOrder (
 Id	integer not null primary key IDENTITY,
@@ -550,3 +572,21 @@ Insert into ProductOrder
 select p.Id, 2
 from Product p
 where p.Title = 'Chiquita Bananas';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 3
+from Product p
+where p.Title = 'Teddy Bear';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 4
+from Product p
+where p.Title = 'Dove Beauty Bar';
+
+Insert into ProductOrder 
+(ProductId, OrderId)
+select p.Id, 4
+from Product p
+where p.Title = 'Pantene Gold Series Shampoo';
