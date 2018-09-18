@@ -31,36 +31,19 @@ namespace DFBangazon.Controllers //namespace of controller
             }
         }
 
-        // GET api/employee?firstName="FristName"
+        // GET all Employees
         [HttpGet]
-        public async Task<IActionResult> Get(string firstName)  //defining the git request gets employee by first name
-        {
-            using (IDbConnection conn = Connection) //setting the connectin to conn
-            {
-                string sql = "SELECT * FROM Employee"; //starting the sql command, selecting all from employee
-
-                if (firstName != null) //selecting from name of employee
-                {
-                    sql += $" WHERE FirstName='{firstName}'";
-                }
-
-                var fullemployees = await conn.QueryAsync<Employee>(sql);  //exposes the enumerator
-                return Ok(fullemployees); //returns selected employee
-            }
-
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}", Name = "GetEmployee")]
-        public async Task<IActionResult> Get([FromRoute] int id) //gets a single employee by id
+        public async Task<IActionResult> Get()
         {
             using (IDbConnection conn = Connection)  //setting the connectin to conn
             {
+
                 string sql = $@"SELECT e.id,
                                       e.FirstName,
                                       e.LastName,
                                       e.IsSupervisor,
                                       e.DepartmentId,
+                                      e.IsActive,
                                       ec.ComputerId,
                                       ec.Id,
                                       ec.EmployeeId,
@@ -75,9 +58,50 @@ namespace DFBangazon.Controllers //namespace of controller
                                       d.ExpenseBudget,
                                       d.Id
                               FROM Employee e
-                              JOIN EmployeeComputer ec ON ec.EmployeeId = e.Id
-                              Join Computer c ON c.Id = ec.ComputerId
-                              JOIN Department d ON d.Id = e.DepartmentId
+                              LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.Id
+                              LEFT JOIN Computer c ON c.Id = ec.ComputerId
+                              LEFT JOIN Department d ON d.Id = e.DepartmentId
+                              WHERE IsActive = 1; ";
+
+                var fullEmployee = await conn.QueryAsync<Employee, EmployeeComputer, Computer, Department, Employee>(sql, (employee, employeecomputer, computer, department) =>
+                {
+                    employee.Computer = computer;
+                    employee.Department = department;
+                    return employee;
+                }); //exposes the enumerator 
+                return Ok(fullEmployee); // return all employee
+            }
+        }
+
+        // GET api/values/5
+        [HttpGet("{id}", Name = "GetEmployee")]
+        public async Task<IActionResult> Get([FromRoute] int id) //gets a single employee by id
+        {
+            using (IDbConnection conn = Connection)  //setting the connectin to conn
+            {
+                string sql = $@"SELECT e.id,
+                                      e.FirstName,
+                                      e.LastName,
+                                      e.IsSupervisor,
+                                      e.DepartmentId,
+                                      e.IsActive,
+                                      ec.ComputerId,
+                                      ec.Id,
+                                      ec.EmployeeId,
+                                      ec.DateAssigned,
+                                      ec.DateTurnedIn,
+                                      c.Id, 
+                                      c.Model,
+                                      c.DecommissionDate,
+                                      c.PurchaseDate,
+                                      c.Condition,
+                                      d.DeptName,
+                                      d.ExpenseBudget,
+                                      d.Id
+                              FROM Employee e
+                              LEFT JOIN EmployeeComputer ec ON ec.EmployeeId = e.Id
+                              LEFT JOIN Computer c ON c.Id = ec.ComputerId
+                              LEFT JOIN Department d ON d.Id = e.DepartmentId
                               WHERE e.Id = {id}; "; //sql select by id
 
                 var singleEmployee = await conn.QueryAsync<Employee, EmployeeComputer, Computer, Department, Employee>(sql,(employee, employeecomputer, computer, department) =>
@@ -95,9 +119,9 @@ namespace DFBangazon.Controllers //namespace of controller
         public async Task<IActionResult> Post([FromBody] Employee employee) //posts a employee
         {
             string sql = $@"INSERT INTO Employee 
-            (FirstName, LastName, IsSupervisor, DepartmentId)
+            (FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
             VALUES
-            ('{employee.FirstName}', '{employee.LastName}', '{employee.IsSupervisor}', '{employee.DepartmentId}');
+            ('{employee.FirstName}', '{employee.LastName}', '{employee.IsSupervisor}', '{employee.DepartmentId}', '{employee.IsActive}');
             select MAX(Id) from Employee"; //returns the last made employee
 
             using (IDbConnection conn = Connection) //setting connection to conn
@@ -118,7 +142,8 @@ namespace DFBangazon.Controllers //namespace of controller
             SET FirstName = '{employee.FirstName}',
                 LastName = '{employee.LastName}', 
                 IsSupervisor = '{employee.IsSupervisor}',
-                DepartmentId = '{employee.DepartmentId}'
+                DepartmentId = '{employee.DepartmentId}',
+                IsActive = '{employee.IsActive}'
             WHERE Id = {id}"; //edits employee by id
 
             try
@@ -166,7 +191,7 @@ namespace DFBangazon.Controllers //namespace of controller
 
         private bool EmployeeExists(int id) //checks if employee exists by id
         {
-            string sql = $"SELECT Id, FirstName, LastName, IsSupervisor, DepartmentId FROM Employee WHERE Id = {id}";
+            string sql = $"SELECT Id, FirstName, LastName, IsSupervisor, DepartmentId, IsActive FROM Employee WHERE Id = {id}";
             using (IDbConnection conn = Connection)
             {
                 return conn.Query<Employee>(sql).Count() > 0; //returns employee by id
