@@ -35,69 +35,71 @@ namespace DFBangazon.Controllers
 
         // GET api/value
         //Defines GET method for GET all from ProductType table
-        //[HttpGet]
-        //public async Task<IActionResult> Get(string _completed)
-        //{
-        //    using (IDbConnection conn = Connection)
-        //    {
-        //        Dictionary<int, TrainingProgram> EmpsInTraining = new Dictionary<int, TrainingProgram>();
+        [HttpGet]
+        public async Task<IActionResult> Get(string _completed)
+        {
+            using (IDbConnection conn = Connection)
+            {
+                Dictionary<int, TrainingProgram> EmpsInTraining = new Dictionary<int, TrainingProgram>();
 
-        //        string sql = @"SELECT tp.ProgName,
-        //                              tp.Id,
-        //                              tp.StartDate,
-        //                              tp.EndDate,
-        //                              tp.MaxAttendees,
-        //                              et.Id,
-        //                              et.EmployeeId,
-        //                              et.TrainingProgramId,
-        //                              e.Id,
-        //                              e.IsSupervisor,
-        //                              e.DepartmentId,
-        //                              e.FirstName,
-        //                              e.LastName
-        //                       FROM TrainingProgram tp
-        //                       JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
-        //                       JOIN Employee e on et.EmployeeId = e.Id";
+                string sql = @"SELECT tp.ProgName,
+                                      tp.Id,
+                                      tp.StartDate,
+                                      tp.EndDate,
+                                      tp.MaxAttendees,
+                                      et.Id,
+                                      et.EmployeeId,
+                                      et.TrainingProgramId,
+                                      e.Id,
+                                      e.IsSupervisor,
+                                      e.DepartmentId,
+                                      e.FirstName,
+                                      e.LastName
+                               FROM TrainingProgram tp
+                               JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                               JOIN Employee e on et.EmployeeId = e.Id";
 
-        //        if (_completed == "false") {
-        //            sql += $"WHERE TrainingProgram.StartDate < DateTime.Today";
-        //            var fullTrainingProgram =
-        //                await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
-        //                sql,
-        //                (trainingprogram, employeetraining, employee) =>
-        //                {
-        //                    if (!EmpsInTraining.ContainsKey(trainingprogram.Id))
-        //                    {
-        //                        EmpsInTraining[trainingprogram.Id] = trainingprogram;
-        //                    }
-        //                    EmpsInTraining[trainingprogram.Id].Employee.Add(employee);
-        //                    return trainingprogram;
-        //                }
-        //                    );
+                if (_completed == "false")
+                {
+                    sql += $" WHERE tp.StartDate <= GETDATE()";
+                    var fullTrainingProgram =
+                        await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
+                        sql,
+                        (trainingprogram, employeetraining, employee) =>
+                        {
+                            if (!EmpsInTraining.ContainsKey(trainingprogram.Id))
+                            {
+                                EmpsInTraining[trainingprogram.Id] = trainingprogram;
+                            }
+                            EmpsInTraining[trainingprogram.Id].Employee.Add(employee);
+                            return trainingprogram;
+                        }
+                            );
 
-        //            return Ok(EmpsInTraining.Values);
-        //        }
- 
+                    return Ok(EmpsInTraining.Values);
+                }
 
-        //        else {
-        //            var fullTrainingProgram =
-        //                await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
-        //                sql,
-        //                (trainingprogram, employeetraining, employee) =>
-        //                {
-        //                    if (!EmpsInTraining.ContainsKey(trainingprogram.Id))
-        //                    {
-        //                        EmpsInTraining[trainingprogram.Id] = trainingprogram;
-        //                    }
-        //                    EmpsInTraining[trainingprogram.Id].Employee.Add(employee);
-        //                    return trainingprogram;
-        //                }
-        //                    );
 
-        //            return Ok(EmpsInTraining.Values);
-        //        };
-        //    }              
-        //}
+                else
+                {
+                    var fullTrainingProgram =
+                        await conn.QueryAsync<TrainingProgram, EmployeeTraining, Employee, TrainingProgram>(
+                        sql,
+                        (trainingprogram, employeetraining, employee) =>
+                        {
+                            if (!EmpsInTraining.ContainsKey(trainingprogram.Id))
+                            {
+                                EmpsInTraining[trainingprogram.Id] = trainingprogram;
+                            }
+                            EmpsInTraining[trainingprogram.Id].Employee.Add(employee);
+                            return trainingprogram;
+                        }
+                            );
+
+                    return Ok(EmpsInTraining.Values);
+                };
+            }
+        }
 
         [HttpGet("{Id}", Name = "GetTrainingProgram")]
         public async Task<IActionResult> Get(int id)

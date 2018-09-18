@@ -184,30 +184,29 @@ from Department d where d.DeptName = 'Delta';
 CREATE TABLE TrainingProgram (
 Id	integer NOT NULL PRIMARY KEY IDENTITY,
 ProgName	varchar(80) NOT NULL,
-StartDate	varchar(80) NOT NULL,
-EndDate	varchar(80) not null,
+StartDate	DATE NOT NULL,
+EndDate	DATE not null,
 MaxAttendees integer not null
 );
 
 Insert into TrainingProgram
 (ProgName, StartDate, EndDate, MaxAttendees)
-select 'New Hire', '9/1/18', '9/15/18', 20
+select 'New Hire', '2018/09/19', '2019/12/18', 20
 ;
 
 Insert into TrainingProgram
 (ProgName, StartDate, EndDate, MaxAttendees)
-select 'Sales', '8/1/18', '8/15/18', 8
+select 'Sales', '2017/12/15', '2017/12/18', 8
 ;
 
 Insert into TrainingProgram
 (ProgName, StartDate, EndDate, MaxAttendees)
-select 'Six Sigma', '7/1/18', '8/15/18', 15
+select 'Six Sigma', '2019/01/15', '2019/02/18', 15
 ;
 
 Insert into TrainingProgram
 (ProgName, StartDate, EndDate, MaxAttendees)
-select 'Diversity', '10/1/18', '10/15/18', 50
-;
+select 'Diversity', '2017/10/15', '2017/10/18', 50;
 					
 CREATE TABLE EmployeeTraining (
 Id	integer NOT NULL PRIMARY KEY IDENTITY,
