@@ -13,5 +13,6 @@ namespace DFBangazon.Models
         public DateTime AccountCreated { get; set; }
         public DateTime LastLogin { get; set; }
         public List<Product> Products { get; set; } = new List<Product>();
+        public List<PaymentType> PaymentTypes { get; set; } = new List<PaymentType>();
 }
 }

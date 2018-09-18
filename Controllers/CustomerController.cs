@@ -35,14 +35,85 @@ namespace DFBangazon.Controllers
         }
         // GET api/customer
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string q, string _include)
         {
             using (IDbConnection conn = Connection)
             {
                 string sql = "SELECT * FROM Customer";
 
-                var allCustomers = (await conn.QueryAsync<Customer>(sql));
-                return Ok(allCustomers);
+                // GET api/customer?_include=product
+
+                if (_include == "products")
+                {
+                    Dictionary<int, Customer> customerProducts = new Dictionary<int, Customer>();
+
+                    sql = @"
+                SELECT
+                    c.Id,
+                    c.FirstName,
+                    c.LastName,
+                    c.AccountCreated,
+                    c.LastLogin,
+                    p.Id,
+                    p.Price,
+                    p.Title,
+                    p.ProdDesc,
+                    p.Quantity,
+                    p.SellerId,
+                    p.ProductTypeId
+                FROM Customer c
+                JOIN Product p ON c.Id = p.SellerId";
+
+                    var customerss = await conn.QueryAsync<Customer, Product, Customer>(
+                    sql,
+                    (customer, product) =>
+                    {
+                        if (!customerProducts.ContainsKey(customer.Id))
+                        {
+                            customerProducts[customer.Id] = customer;
+                        }
+                        customerProducts[customer.Id].Products.Add(product);
+                        return customer;
+                    }
+                    );
+                    return Ok(customerss);
+                }else if(_include == "paymenttypes")
+                {
+                    Dictionary<int, Customer> customerPaymentTypes = new Dictionary<int, Customer>();
+
+                    sql = @"SELECT
+                            c.Id,
+                            c.FirstName,
+                            c.LastName,
+                            c.AccountCreated,
+                            c.LastLogin,
+                            p.Id,
+                            p.CustomerId,
+                            p.AccountNo,
+                            p.AccType,
+                            p.Nickname,
+                            p.IsActive
+                    FROM Customer c
+                    JOIN PaymentType p ON c.Id = p.CustomerId";
+
+                    var custPayTypes = await conn.QueryAsync<Customer, PaymentType, Customer>(
+                        sql,
+                        (customers, paymenttypes) =>
+                        {
+                            if (!customerPaymentTypes.ContainsKey(customers.Id))
+                            {
+                                customerPaymentTypes[customers.Id] = customers;
+                            }
+                            customerPaymentTypes[customers.Id].PaymentTypes.Add(paymenttypes);
+                            return customers;
+                        });
+                    return Ok(custPayTypes);
+                }
+                else
+                {
+                    var allCustomers = (await conn.QueryAsync<Customer>(sql));
+                    return Ok(allCustomers);
+                }
             }
         }
 
@@ -111,76 +182,6 @@ namespace DFBangazon.Controllers
                 {
                     throw;
                 }
-            }
-        }
-
-        // GET api/customer?_include=product
-        [HttpGet]
-        public async Task<IActionResult> Get(string q, string _include)
-        {
-            string sql = @"
-                SELECT
-                    c.Id,
-                    c.FirstName,
-                    c.LastName,
-                    c.AccountCreated,
-                    c.LastLogin,
-                    p.Id,
-                    p.Price,
-                    p.Title,
-                    p.ProdDesc,
-                    p.Quantity,
-                    p.SellerId,
-                    p.ProductTypeId
-                FROM Customer c
-                JOIN Product p ON c.Id = p.SellerId";
-
-            if (_include !=null && _include.Contains("product"))
-            {
-
-            }
-
-            if (q != null)
-            {
-
-            }
-            Console.WriteLine(sql);
-
-            using (IDbConnection conn = Connection)
-            {
-                if (_include == "product")
-                { 
-                Dictionary<int, Customer> report = new Dictionary<int, Customer>();
-
-                    var customerProducts = await conn.QueryAsync<Customer, Product, Customer>(
-                    sql,
-                    (customer, product) =>
-                    {
-                        return customer;
-                    }
-                    );
-                    return Ok(customerProducts);
-                    }
-                IEnumerable<Customer> customers = await conn.QueryAsync<Customer>(sql);
-                return Ok(customers);
-            }
-
-        }
-
-        // DELETE api/customer/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
-        {
-            string sql = $@"DELETE FROM Customer WHERE Id = {id}";
-
-            using (IDbConnection conn = Connection)
-            {
-                int rowsAffected = await conn.ExecuteAsync(sql);
-                if (rowsAffected > 0)
-                {
-                    return new StatusCodeResult(StatusCodes.Status204NoContent);
-                }
-                throw new Exception("No rows affected");
             }
         }
 
