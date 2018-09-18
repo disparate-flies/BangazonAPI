@@ -10,7 +10,7 @@ namespace DFBangazon.Models
         public int Id { get; set; }
         public int Price { get; set; }
         public string Title { get; set;}
-        public string ProductDesc { get; set; }
+        public string ProdDesc { get; set; }
         public int Quantity { get; set; }
         public int SellerId { get; set; }
         public Customer Customer { get; set;}
