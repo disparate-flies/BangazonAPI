@@ -69,103 +69,116 @@ FirstName	varchar(80) NOT NULL,
 LastName	varchar(80) NOT NULL,
 IsSupervisor	bit not null,
 DepartmentId integer not null,
+IsActive	bit not null
 Constraint FK_Department FOREIGN KEY(DepartmentId) REFERENCES Department(Id)
 );
 					
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Emp',
 'One',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Person',
 'Two',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select'Man',
 'Three',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Alpha';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Boss',
 'Woman',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Lady',
 'Four',
 0,
-d.Id
+d.Id,
+0
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'John',
 'Doe',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Bravo';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Man',
 'Five',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Dude',
 'Six',
 0,
-d.Id
+d.Id,
+0
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Jane',
 'Doe',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Charlie';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Chick',
 'Seven',
 1,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Mister',
 'Eight',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 
 Insert into Employee
-(FirstName, LastName, IsSupervisor, DepartmentId)
+(FirstName, LastName, IsSupervisor, DepartmentId, IsActive)
 select 'Madam',
 'Nine',
 0,
-d.Id
+d.Id,
+1
 from Department d where d.DeptName = 'Delta';
 					
 CREATE TABLE TrainingProgram (
