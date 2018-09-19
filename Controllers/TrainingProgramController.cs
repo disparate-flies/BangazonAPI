@@ -201,23 +201,36 @@ namespace DFBangazon.Controllers
         // DELETE api/values/5
         // Defines DELETE method to remove an item from ProductType Table
         //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] TrainingProgram trainingProgram)
+        //public async Task<IActionResult> Delete([FromRoute] int id)
         //{
-        //    if (trainingProgram.StartDate >= );
+        //    string sql = $"DELETE FROM TrainingProgram WHERE Id = {id} AND StartDate <= GETDATE()";
 
-        //    string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
-
-        //    using (IDbConnection conn = Connection)
+        //    try
         //    {
-        //        int rowsAffected = await conn.ExecuteAsync(sql);
-        //        if (rowsAffected > 0)
+        //        using (IDbConnection conn = Connection)
         //        {
-        //            return new StatusCodeResult(StatusCodes.Status204NoContent);
+        //            int rowsAffected = await conn.ExecuteAsync(sql);
+        //            if (rowsAffected > 0)
+        //            {
+        //                return new StatusCodeResult(StatusCodes.Status204NoContent);
+        //            }
+        //            throw new Exception("No rows affected");
         //        }
-        //        throw new Exception("No rows affected");
         //    }
+        //    catch (Exception)
+        //    {
+        //        if (!TrainingProgramExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        }
+           
 
         private bool TrainingProgramExists(int id)
         {
